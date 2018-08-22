@@ -12,8 +12,11 @@
   <ion-list-header>
     Paired Devices
   </ion-list-header>
+
   <ion-item *ngFor="let device of pairedDevices">
-    {{device.name}}
+    <span (click)="selectDevice2(device)">
+    {{device.name}}{{device.id}}
+    </span>
   </ion-item>
   <button ion-button block (click)="disconnect()">Disconnect</button>
   <ion-list-header>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+//import { NavController } from 'ionic-angular';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { AlertController } from 'ionic-angular';
 @Component({
@@ -16,6 +16,7 @@ export class HomePage {
   }
 
   startScanning() {
+    // alert("555");
     this.pairedDevices = null;
     this.unpairedDevices = null;
     this.gettingDevices = true;
@@ -23,22 +24,24 @@ export class HomePage {
       this.unpairedDevices = success;
       this.gettingDevices = false;
       success.forEach(element => {
-        // alert(element.name);
+        // alert(element);
       });
     },
       (err) => {
         console.log(err);
+      //  alert(err);
       })
 
     this.bluetoothSerial.list().then((success) => {
       this.pairedDevices = success;
     },
       (err) => {
-
+      //   alert(err);
       })
   }
-  success = (data) => alert(data);
-  fail = (error) => alert(error);
+
+  success = (data) => this.openPort()//alert("val : "+data);
+  fail = (error) => alert("error : "+error);
 
   selectDevice(address: any) {
 
@@ -65,6 +68,46 @@ export class HomePage {
 
   }
 
+  openPort(){
+    this.bluetoothSerial.write('01 0C\r').then( (success) => {
+        alert('Connected ' + '. Data reading is successful: ' + new Uint8Array(success));
+
+    },
+    (error) => {
+        alert('reading failed:' + error );
+    });
+
+    this.bluetoothSerial.read().then((success) => {
+        var bytes = new Uint8Array(success);
+        console.log(bytes);
+        alert('read : '+bytes);
+    },
+    (error) => {
+        alert('reading failed:' + error );
+    });
+   }
+
+  selectDevice2(device:any){
+      this.bluetoothSerial.connect(device.id).subscribe(this.success, this.fail);
+    //this.bluetoothSerial.connect(device.id,this.success, this.fail);
+
+
+
+  /*  this.bluetoothSerial.read().then((success) => {
+      var bytes = new Uint8Array(success);
+      console.log(bytes);
+      alert(id+' / '+bytes);
+    },
+      (err) => {
+        console.log(err);
+        alert(err);
+      })*/
+
+    //  this.bluetoothSerial.subscribeRawData(function (data) {
+
+
+  }
+
   disconnect() {
     let alert = this.alertCtrl.create({
       title: 'Disconnect?',
@@ -87,4 +130,6 @@ export class HomePage {
     });
     alert.present();
   }
+
+
 }
